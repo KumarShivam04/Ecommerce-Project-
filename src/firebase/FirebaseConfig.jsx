@@ -17,24 +17,3 @@ const fireDB = getFirestore(app);
 const auth = getAuth(app);
 
 export { fireDB, auth };
-// 
-
-
-// import { initializeApp } from "firebase/app";
-// import { getFirestore } from 'firebase/firestore';
-// import { getAuth } from 'firebase/auth';
-
-// const firebaseConfig = {
-  // apiKey: "AIzaSyBVdsM-6A_h1kDEaXbc8zGkKgF5fuwdvVI",
-  // authDomain: "ecom-4a359.firebaseapp.com",
-  // projectId: "ecom-4a359",
-  // storageBucket: "ecom-4a359.appspot.com",
-  // messagingSenderId: "947562340399",
-  // appId: "1:947562340399:web:ea6c8eaa3e8374cfeca6da"
-// };
-
-// const app = initializeApp(firebaseConfig);
-// const fireDB = getFirestore(app);
-// const auth = getAuth(app);
-// 
-// export { fireDB, auth };
