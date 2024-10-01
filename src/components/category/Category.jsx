@@ -33,10 +33,10 @@ const Category = () => {
                     <div key={index} className="flex flex-col items-center">
                         <div
                             onClick={() => navigate(`/category/${item.name}`)}
-                            className="w-20 h-20 lg:w-24 lg:h-24 max-w-xs rounded-full bg-pink-500 transition-all 
+                            className="w-16 h-16 lg:w-20 lg:h-20 max-w-xs rounded-full bg-pink-500 transition-all 
                             hover:bg-pink-300 cursor-pointer mb-2 flex items-center justify-center"
                         >
-                            <img src={item.image} alt={item.name} className="w-14 h-14 lg:w-18 lg:h-18" />
+                            <img src={item.image} alt={item.name} className="w-10 h-10 lg:w-14 lg:h-14" />
                         </div>
                         <h1 className="text-sm lg:text-lg text-center font-medium title-font">{item.name}</h1>
                     </div>
