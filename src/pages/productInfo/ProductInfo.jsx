@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import myContext from "../../context/myContext";
-import { useParams } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { fireDB } from "../../firebase/FirebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import Loader from "../../components/loader/Loader";
@@ -11,7 +11,8 @@ import toast from "react-hot-toast";
 
 const ProductInfo = () => {
     const context = useContext(myContext);
-    const { loading, setLoading } = context;
+    const { loading, setLoading, isAuthenticated } = context;
+    const navigate = useNavigate();
 
     const [product, setProduct] = useState(null);
     const [selectedSize, setSelectedSize] = useState('');
@@ -39,7 +40,18 @@ const ProductInfo = () => {
         }
     };
 
+    const handleAuthenticationCheck = (item, actionType) => {
+        if (!isAuthenticated) {
+            // Redirect to signup page if not logged in
+            toast.error("Please login to continue");
+            navigate("/signup", { state: { redirectTo: `/productInfo` }});
+            return false;
+        }
+        return true;
+    };
+
     const addCart = (item) => {
+        if (!handleAuthenticationCheck(item, 'addCart')) return;
         if (["shirt", "fashion", "jacket", "shoes"].includes(product.category?.toLowerCase())) {
             if (!selectedSize) {
                 return toast.error("Please select a size");
@@ -52,6 +64,7 @@ const ProductInfo = () => {
     };
 
     const deleteCart = (item) => {
+        if (!handleAuthenticationCheck(item, 'deleteCart')) return;
         dispatch(deleteFromCart({ ...item, size: selectedSize }));
         toast.success("Removed from cart");
     };
@@ -164,10 +177,9 @@ const ProductInfo = () => {
                                 </div>
 
                                {/* Return Policy Section */}
-                               
                                 <div className="mb-6">
                                     <p className="text-sm text-pink-600">
-                                        <span className="font-bold" > 10- Days Return Policy. 
+                                        <span className="font-bold">10-Day Return Policy. 
                                         You can return the item within 10 days of receipt for a full refund.</span>
                                     </p>
                                 </div>
@@ -207,31 +219,28 @@ const ProductInfo = () => {
                                         </h2>
                                         <input
                                             type="number"
-                                            min="1"
-                                            max="5"
                                             value={quantity}
+                                            min={1}
+                                            max={5}
                                             onChange={handleQuantityChange}
-                                            className="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg"
+                                            className="form-input w-20 text-center bg-pink-500 text-white"
                                         />
                                     </div>
                                 )}
 
-                                <div className="mb-6 flex space-x-4">
-                                    {cartItems.some((p) => p.id === product.id && p.size === selectedSize) ? (
-                                        <>
-                                            <button
-                                                onClick={() => deleteCart(product)}
-                                                className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-800"
-                                            >
-                                                Remove from Cart
-                                            </button>
-                                        </>
-                                    ) : (
+                                <div className="flex items-center">
+                                    <button
+                                        onClick={() => addCart(product)}
+                                        className="px-8 py-2 mr-4 text-white bg-pink-600 hover:bg-pink-700 rounded"
+                                    >
+                                        Add to Cart
+                                    </button>
+                                    {cartItems.find((item) => item.id === product.id) && (
                                         <button
-                                            onClick={() => addCart(product)}
-                                            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-800"
+                                            onClick={() => deleteCart(product)}
+                                            className="px-8 py-2 text-white bg-gray-600 hover:bg-gray-700 rounded"
                                         >
-                                            Add to Cart
+                                            Remove from Cart
                                         </button>
                                     )}
                                 </div>

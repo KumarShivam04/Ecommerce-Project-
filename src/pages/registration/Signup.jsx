@@ -110,7 +110,7 @@ const Signup = () => {
                 <div className="mb-3">
                     <input
                         type="email"
-                        placeholder='Email Address'
+                        placeholder='Enter Email Address '
                         value={userSignup.email}
                         onChange={(e) => {
                             setUserSignup({
@@ -126,7 +126,7 @@ const Signup = () => {
                 <div className="mb-5">
                     <input
                         type="password"
-                        placeholder='Password'
+                        placeholder=' Enter six digit password'
                         value={userSignup.password}
                         onChange={(e) => {
                             setUserSignup({

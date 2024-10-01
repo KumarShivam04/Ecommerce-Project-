@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 const CategoryPage = () => {
     const { categoryname } = useParams();
     const context = useContext(myContext);
-    const { getAllProduct, loading } = context;
+    const { getAllProduct, loading, isAuthenticated, user } = context;
     const navigate = useNavigate();
 
     const filterProduct = getAllProduct.filter((obj) => obj.category.includes(categoryname));
@@ -28,7 +28,19 @@ const CategoryPage = () => {
         setShowSizeDropdown((prev) => ({ ...prev, [id]: true }));
     };
 
+    const handleAuthenticationCheck = (item, actionType) => {
+        if (!isAuthenticated) {
+            // Redirect to signup page if not logged in
+            toast.error("Please login to continue");
+            navigate("/signup", { state: { redirectTo: `/category/${categoryname}` } });
+            return false;
+        }
+        return true;
+    };
+
     const addCart = (item) => {
+        // Check if the user is logged in
+        if (!handleAuthenticationCheck(item, 'addCart')) return;
         // Check if the item belongs to categories that require a size selection
         if (["Shirt", "Jacket", "Fashion", "Shoes"].includes(item.category)) {
             // If size not selected, show error and return
@@ -47,6 +59,7 @@ const CategoryPage = () => {
     };
 
     const deleteCart = (item) => {
+         if (!handleAuthenticationCheck(item, 'deleteCart')) return;
         dispatch(deleteFromCart(item));
         toast.success("Removed from cart");
     };
