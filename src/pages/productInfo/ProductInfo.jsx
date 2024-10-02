@@ -40,18 +40,18 @@ const ProductInfo = () => {
         }
     };
 
-    const handleAuthenticationCheck = (item, actionType) => {
+    const handleAuthenticationCheck = (actionType) => {
         if (!isAuthenticated) {
             // Redirect to signup page if not logged in
             toast.error("Please login to continue");
-            navigate("/signup", { state: { redirectTo: `/productInfo` }});
+            navigate("/signup", { state: { redirectTo: `/productInfo/${id}` }});
             return false;
         }
         return true;
     };
 
     const addCart = (item) => {
-        if (!handleAuthenticationCheck(item, 'addCart')) return;
+        if (!handleAuthenticationCheck('addCart')) return;
         if (["shirt", "fashion", "jacket", "shoes"].includes(product.category?.toLowerCase())) {
             if (!selectedSize) {
                 return toast.error("Please select a size");
@@ -64,7 +64,7 @@ const ProductInfo = () => {
     };
 
     const deleteCart = (item) => {
-        if (!handleAuthenticationCheck(item, 'deleteCart')) return;
+        if (!handleAuthenticationCheck('deleteCart')) return;
         dispatch(deleteFromCart({ ...item, size: selectedSize }));
         toast.success("Removed from cart");
     };

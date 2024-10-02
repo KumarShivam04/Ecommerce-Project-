@@ -21,6 +21,7 @@ import CategoryPage from "./pages/category/CategoryPage";
 import Returns from "./pages/Returns";
 import AboutUs from "./pages/AboutUs";
 import Privacy from "./pages/Privacy";
+import ContactUs from "./pages/ContactUs";
 
 const App = () => {
   return (
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/returns" element={<Returns />} />
           <Route path="/aboutus" element={<AboutUs />} />
+          <Route path="/contactus" element={<ContactUs />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/category/:categoryname" element={<CategoryPage />} /> 
 
