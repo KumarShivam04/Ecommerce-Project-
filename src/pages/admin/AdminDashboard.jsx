@@ -2,25 +2,40 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import ProductDetail from '../../components/admin/ProductDetail';
 import OrderDetail from '../../components/admin/OrderDetail';
 import UserDetail from '../../components/admin/UserDetail';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import myContext from '../../context/myContext';
 import { Link } from 'react-router-dom';
+import { fireDB } from "../../firebase/FirebaseConfig";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 const AdminDashboard = () => {
     const user = JSON.parse(localStorage.getItem('users'));
     const context = useContext(myContext);
-    const { getAllProduct, getAllOrder, getAllUser, fetchOrders } = context;
-
+    const [ loader, setLoading ] = useState(false);
+    const { getAllProduct, getAllUser, fetchOrders } = context;
+    const [getAllOrder, setGetAllOrder] = useState([]);
     const handleHomeClick = () => {
         console.log("Home button clicked");
     };
 
-    
     useEffect(() => {
-        if (fetchOrders) {
-            fetchOrders(); 
-        }
-    }, [fetchOrders]);
+        const fetchOrders = async (userId) => {
+            setLoading(true);
+            try {
+                const q = query(collection(fireDB, 'order'), where('userid', '==', userId));
+                const querySnapshot = await getDocs(q);
+                const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setGetAllOrder(ordersData);
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchOrders(user?.uid);
+    }, [user?.uid]);
+
+    console.log(getAllOrder)
 
     return (
         <div>
@@ -150,7 +165,7 @@ const AdminDashboard = () => {
                                     <h2 className="title-font font-medium text-3xl text-pink-400 fonts1">
                                         {getAllOrder.length}
                                     </h2>
-                                    <p className="text-pink-500 font-bold">Total Order</p>
+                                    <p className="text-pink-500 font-bold">Total Orders</p>
                                 </div>
                             </Tab>
 

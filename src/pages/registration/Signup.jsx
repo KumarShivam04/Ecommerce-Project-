@@ -10,7 +10,7 @@ import Loader from "../../components/loader/Loader";
 
 const Signup = () => {
     const context = useContext(myContext);
-    const {loading, setLoading } = useContext(myContext);
+    const { loading, setLoading } = useContext(myContext);
 
     // navigate 
     const navigate = useNavigate();
@@ -30,10 +30,11 @@ const Signup = () => {
     const userSignupFunction = async () => {
         // validation 
         if (userSignup.name === "" || userSignup.email === "" || userSignup.password === "") {
-            toast.error("All Fields are required")
+            toast.error("All Fields are required");
+            return; // Exit early if validation fails
         }
 
-        setLoading(true)
+        setLoading(true);
         try {
             const users = await createUserWithEmailAndPassword(auth, userSignup.email, userSignup.password);
 
@@ -54,11 +55,11 @@ const Signup = () => {
                 )
             }
 
-            // create user Refrence
-            const userRefrence = collection(fireDB, "user")
+            // create user Reference
+            const userReference = collection(fireDB, "user");
 
             // Add User Detail
-            await addDoc(userRefrence, user);
+            await addDoc(userReference, user);
 
             setUserSignup({
                 name: "",
@@ -69,7 +70,7 @@ const Signup = () => {
             toast.success("Signup Successfully");
 
             setLoading(false);
-            navigate('/login')
+            navigate('/login');
         } catch (error) {
             console.log(error);
             toast.error("Signup failed. Please try again.");
@@ -77,20 +78,20 @@ const Signup = () => {
         }
 
     }
+
     return (
         <div className='flex justify-center items-center h-screen'>
-            {loading && <Loader/>}
-            {/* Login Form  */}
-            <div className="login_Form bg-pink-50 px-8 py-6 border border-pink-100 rounded-xl shadow-md">
-
-                {/* Top Heading  */}
+            {loading && <Loader />}
+            {/* Signup Form */}
+            <div className="signup_Form bg-pink-50 px-8 py-6 border border-pink-100 rounded-xl shadow-md w-full max-w-md">
+                {/* Top Heading */}
                 <div className="mb-5">
-                    <h2 className='text-center text-2xl font-bold text-pink-500 '>
+                    <h2 className='text-center text-2xl font-bold text-pink-500'>
                         Signup
                     </h2>
                 </div>
 
-                {/* Input One  */}
+                {/* Input One */}
                 <div className="mb-3">
                     <input
                         type="text"
@@ -102,15 +103,15 @@ const Signup = () => {
                                 name: e.target.value
                             })
                         }}
-                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-96 rounded-md outline-none placeholder-pink-200'
+                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-full rounded-md outline-none placeholder-pink-200'
                     />
                 </div>
 
-                {/* Input Two  */}
+                {/* Input Two */}
                 <div className="mb-3">
                     <input
                         type="email"
-                        placeholder='Enter Email Address '
+                        placeholder='Enter Email Address'
                         value={userSignup.email}
                         onChange={(e) => {
                             setUserSignup({
@@ -118,15 +119,15 @@ const Signup = () => {
                                 email: e.target.value
                             })
                         }}
-                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-96 rounded-md outline-none placeholder-pink-200'
+                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-full rounded-md outline-none placeholder-pink-200'
                     />
                 </div>
 
-                {/* Input Three  */}
+                {/* Input Three */}
                 <div className="mb-5">
                     <input
                         type="password"
-                        placeholder=' Enter six digit password'
+                        placeholder='Enter six-digit password'
                         value={userSignup.password}
                         onChange={(e) => {
                             setUserSignup({
@@ -134,23 +135,23 @@ const Signup = () => {
                                 password: e.target.value
                             })
                         }}
-                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-96 rounded-md outline-none placeholder-pink-200'
+                        className='bg-pink-50 border border-pink-200 px-2 py-2 w-full rounded-md outline-none placeholder-pink-200'
                     />
                 </div>
 
-                {/* Signup Button  */}
+                {/* Signup Button */}
                 <div className="mb-5">
                     <button
                         type='button'
                         onClick={userSignupFunction}
-                        className='bg-pink-500 hover:bg-pink-600 w-full text-white text-center py-2 font-bold rounded-md '
+                        className='bg-pink-500 hover:bg-pink-600 w-full text-white text-center py-2 font-bold rounded-md'
                     >
                         Signup
                     </button>
                 </div>
 
                 <div>
-                    <h2 className='text-black'>Have an account <Link className=' text-pink-500 font-bold' to={'/login'}>Login</Link></h2>
+                    <h2 className='text-black'>Have an account? <Link className='text-pink-500 font-bold' to={'/login'}>Login</Link></h2>
                 </div>
 
             </div>

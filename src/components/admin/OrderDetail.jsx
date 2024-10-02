@@ -1,27 +1,39 @@
-import { useEffect, useContext, useState} from "react";
+import React, { useEffect, useContext, useState} from "react";
 import myContext from "../../context/myContext";
 import { fireDB } from "../../firebase/FirebaseConfig"; 
-import { collection, getDocs } from "firebase/firestore"; 
+import { collection, getDocs , query, where } from "firebase/firestore"; 
 
 const OrderDetail = () => {
     const context = useContext(myContext);
+    // const user = context.user;
     const { deleteProduct } = context;
+    const [ loader, setLoading ] = useState(false);
     const [getAllOrder, setGetAllOrder] = useState([]);
     // console.log(getAllOrder)
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const querySnapshot = await getDocs(collection(fireDB, "order")); 
-                const orders = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setGetAllOrder(orders);
-            } catch (error) {
-                console.error("Error fetching orders: ", error);
-            }
-        };
+    const user = JSON.parse(localStorage.getItem('users'));
 
-        fetchOrders();
-    }, []); 
+    if (!user) {
+        return <div>Loading user data...</div>;
+    }
+
+    useEffect(() => {
+    const fetchOrders = async (userId) => {
+        setLoading(true);
+        try {
+            const q = query(collection(fireDB, 'order'), where('userid', '==', userId));
+            const querySnapshot = await getDocs(q);
+            const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setGetAllOrder(ordersData); // Ensure state is updated
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+            fetchOrders(user?.uid);
+    },          [user?.uid]);
+
 
     return (
         <div>
@@ -116,11 +128,11 @@ const OrderDetail = () => {
                                     Action
                                 </th>
                             </tr>
-                            {getAllOrder.map((order) => (
+                            {getAllOrder.map((order, index) => (
                                 // console.log(order)
-                                
+
                                     <>
-                                        {order.cartItems.map((item, index) => {
+                                        {order.cartItems.map((item) => {
                                             const { id, productImageUrl1, title, category, price, quantity } = item
                                             return (
                                                 <tr key={index} className="text-pink-300">
