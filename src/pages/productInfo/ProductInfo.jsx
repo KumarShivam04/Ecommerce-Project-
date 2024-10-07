@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 
 const ProductInfo = () => {
     const context = useContext(myContext);
-    const { loading, setLoading, isAuthenticated } = context;
+    const { loading, setLoading } = context;
     const navigate = useNavigate();
 
     const [product, setProduct] = useState(null);
@@ -40,18 +40,7 @@ const ProductInfo = () => {
         }
     };
 
-    const handleAuthenticationCheck = (actionType) => {
-        if (!isAuthenticated) {
-            // Redirect to signup page if not logged in
-            toast.error("Please login to continue");
-            navigate("/signup", { state: { redirectTo: `/productInfo/${id}` }});
-            return false;
-        }
-        return true;
-    };
-
     const addCart = (item) => {
-        if (!handleAuthenticationCheck('addCart')) return;
         if (["shirt", "fashion", "jacket", "shoes"].includes(product.category?.toLowerCase())) {
             if (!selectedSize) {
                 return toast.error("Please select a size");
@@ -60,11 +49,11 @@ const ProductInfo = () => {
         } else {
             dispatch(addToCart({ ...item, quantity }));
         }
+
         toast.success("Added to cart");
     };
 
     const deleteCart = (item) => {
-        if (!handleAuthenticationCheck('deleteCart')) return;
         dispatch(deleteFromCart({ ...item, size: selectedSize }));
         toast.success("Removed from cart");
     };

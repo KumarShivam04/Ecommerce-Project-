@@ -1,6 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import myContext from "../../context/myContext";
 import { Timestamp, addDoc, collection } from "firebase/firestore";
 import { auth, fireDB } from "../../firebase/FirebaseConfig";
@@ -11,9 +10,17 @@ import Loader from "../../components/loader/Loader";
 const Signup = () => {
     const context = useContext(myContext);
     const { loading, setLoading } = useContext(myContext);
-
-    // navigate 
     const navigate = useNavigate();
+    const location = useLocation();
+    const [redirectTo, setRedirectTo] = useState('/');
+
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const redirectUrl = params.get('redirect');
+        if (redirectUrl) {
+            setRedirectTo(redirectUrl);
+        }
+    }, [location.search]);
 
     // User Signup State 
     const [userSignup, setUserSignup] = useState({
@@ -78,6 +85,16 @@ const Signup = () => {
         }
 
     }
+
+    const handleSignup = async () => {
+        // After successful signup or login
+        const user = await signupUser(); // Your signup/login logic here
+
+        if (user) {
+            toast.success("Signup successful!");
+            navigate(redirectTo); // Redirect to the original page
+        }
+    };
 
     return (
         <div className='flex justify-center items-center h-screen'>

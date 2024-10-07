@@ -13,7 +13,7 @@ const CartPage = () => {
     const cartItems = useSelector((state) => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    
     // Load cart items from local storage on page load
     useEffect(() => {
         const savedCart = JSON.parse(localStorage.getItem('cart'));
@@ -52,6 +52,7 @@ const CartPage = () => {
         localStorage.setItem('cart', JSON.stringify(cartItems));
     }, [cartItems]);
 
+    // User details from local storage
     const user = JSON.parse(localStorage.getItem('users'));
 
     const [addressInfo, setAddressInfo] = useState({
@@ -67,7 +68,21 @@ const CartPage = () => {
         })
     });
 
+    // Redirect to login/signup page if the user is not logged in
+    useEffect(() => {
+        if (!user) {
+            // toast.error("Please log in to continue");
+            navigate("/signup"); // Redirect to signup/login page
+        }
+    }, [user, navigate]);
+
     const buyNowFunction = async () => {
+        // If no user is logged in, navigate to signup/login page
+        if (!user) {
+            toast.error("Please log in to continue");
+            return navigate('/signup');
+        }
+
         if (!addressInfo.name || !addressInfo.address || !addressInfo.pincode || !addressInfo.mobileNumber) {
             return toast.error("All fields are required");
         }

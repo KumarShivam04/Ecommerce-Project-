@@ -1,7 +1,6 @@
 import React, { createContext, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { fireDB } from "../firebase/FirebaseConfig";
-import ProductInfo from "../pages/productInfo/ProductInfo";
 
 const MyContext = createContext();
 

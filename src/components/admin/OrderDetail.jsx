@@ -1,39 +1,14 @@
-import React, { useEffect, useContext, useState} from "react";
+import React, { useContext, useState } from "react";
 import myContext from "../../context/myContext";
-import { fireDB } from "../../firebase/FirebaseConfig"; 
-import { collection, getDocs , query, where } from "firebase/firestore"; 
+import Loader from "../../components/loader/Loader";
 
-const OrderDetail = () => {
+const OrderDetail = ({orders}) => {
     const context = useContext(myContext);
-    // const user = context.user;
     const { deleteProduct } = context;
+
     const [ loader, setLoading ] = useState(false);
-    const [getAllOrder, setGetAllOrder] = useState([]);
+    // const [getAllOrder, setGetAllOrder] = useState([]);
     // console.log(getAllOrder)
-
-    const user = JSON.parse(localStorage.getItem('users'));
-
-    if (!user) {
-        return <div>Loading user data...</div>;
-    }
-
-    useEffect(() => {
-    const fetchOrders = async (userId) => {
-        setLoading(true);
-        try {
-            const q = query(collection(fireDB, 'order'), where('userid', '==', userId));
-            const querySnapshot = await getDocs(q);
-            const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setGetAllOrder(ordersData); // Ensure state is updated
-        } catch (error) {
-            console.error("Error fetching orders:", error);
-        } finally {
-            setLoading(false);
-        }
-    };
-            fetchOrders(user?.uid);
-    },          [user?.uid]);
-
 
     return (
         <div>
@@ -127,12 +102,14 @@ const OrderDetail = () => {
                                     className="h-12 px-6 text-md font-bold fontPara border-l first:border-l-0 border-pink-100 text-slate-700 bg-slate-100">
                                     Action
                                 </th>
+
                             </tr>
-                            {getAllOrder.map((order, index) => (
-                                // console.log(order)
+                            {orders?.map((order) => {
+                                console.log(order)
+                                return (
 
                                     <>
-                                        {order.cartItems.map((item) => {
+                                        {order.cartItems.map((item, index) => {
                                             const { id, productImageUrl1, title, category, price, quantity } = item
                                             return (
                                                 <tr key={index} className="text-pink-300">
@@ -220,7 +197,7 @@ const OrderDetail = () => {
                                         })}
                                     </>
                                 )
-                           )}
+                            })}
                         </tbody>
                     </table>
                 </div>

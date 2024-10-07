@@ -1,5 +1,5 @@
-import { useContext, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import myContext from "../../context/myContext";
 import toast from "react-hot-toast";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -9,10 +9,19 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 
 const Login = () => {
     const context = useContext(myContext);
-    const { loading, setLoading } = context || {}; // Add default value to avoid destructuring errors
-
-    // navigate 
+    const { loading, setLoading } = context || {}; 
     const navigate = useNavigate();
+    const location = useLocation();
+    const [redirectTo, setRedirectTo] = useState('/ '); 
+
+    
+    useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const redirectUrl = params.get('redirect');
+        if (redirectUrl) {
+            setRedirectTo(redirectUrl);
+        }
+    }, [location.search]);
 
     // User Login State 
     const [userLogin, setUserLogin] = useState({
@@ -23,12 +32,10 @@ const Login = () => {
     /**========================================================================
      *                          User Login Function 
     *========================================================================**/
-
     const userLoginFunction = async () => {
-        // Validation 
         if (userLogin.email === "" || userLogin.password === "") {
             toast.error("All Fields are required");
-            return; // Exit early if validation fails
+            return;
         }
 
         setLoading(true);
@@ -49,13 +56,8 @@ const Login = () => {
                     email: "",
                     password: ""
                 });
-                toast.success("Login Successfully");
-
-                if (user.role === "user") {
-                    navigate('/user-dashboard');
-                } else {
-                    navigate('/admin-dashboard');
-                }
+                toast.success("Login Successful");
+                navigate(redirectTo); 
             } else {
                 toast.error("User data not found");
             }
@@ -114,11 +116,11 @@ const Login = () => {
                 </div>
 
                 <div>
-                    <h2 className='text-black'>Don't Have an account <Link className='text-pink-500 font-bold' to='/signup'>Signup</Link></h2>
+                    <h2 className='text-black'>Don't Have an account <Link className='text-pink-500 font-bold' to={`/signup?redirect=${redirectTo}`}>Signup</Link></h2>
                 </div>
             </div>
         </div>
     );
-}
+};
 
 export default Login;

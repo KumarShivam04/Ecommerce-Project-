@@ -1,6 +1,35 @@
 import React, { useState } from 'react';
+import Swal from 'sweetalert2'
 
 const ContactUs = () => {
+
+    const onSubmit = async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+    
+        formData.append("access_key", "85209dd3-eba7-4155-b28c-de1dc7965936");
+    
+        const object = Object.fromEntries(formData);
+        const json = JSON.stringify(object);
+    
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+          },
+          body: json
+        }).then((res) => res.json());
+    
+        if (res.success) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Message Sent Successfully!',
+                icon: 'success',
+              });
+        }
+      };
+    
     // State to manage form inputs
     const [formData, setFormData] = useState({
         name: '',
@@ -33,7 +62,7 @@ const ContactUs = () => {
                 </div>
 
                 <div className="lg:w-1/2 md:w-2/3 mx-auto">
-                    <form onSubmit={handleSubmit} className="flex flex-wrap -m-2">
+                    <form onSubmit={onSubmit} className="flex flex-wrap -m-2">
                         {/* Name Input */}
                         <div className="p-2 w-full">
                             <label htmlFor="name" className="leading-7 text-sm text-gray-600">Name</label>

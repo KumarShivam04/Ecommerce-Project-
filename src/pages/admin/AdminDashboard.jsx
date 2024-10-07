@@ -12,30 +12,31 @@ const AdminDashboard = () => {
     const user = JSON.parse(localStorage.getItem('users'));
     const context = useContext(myContext);
     const [ loader, setLoading ] = useState(false);
-    const { getAllProduct, getAllUser, fetchOrders } = context;
+    const { getAllProduct, getAllUser } = context;
     const [getAllOrder, setGetAllOrder] = useState([]);
+    
     const handleHomeClick = () => {
         console.log("Home button clicked");
     };
 
-    useEffect(() => {
-        const fetchOrders = async (userId) => {
-            setLoading(true);
+        const fetchOrders = async () => {
             try {
-                const q = query(collection(fireDB, 'order'), where('userid', '==', userId));
+                const q = query(collection(fireDB, 'order'), 
+                // where('userid', '==', userId)
+                );
                 const querySnapshot = await getDocs(q);
                 const ordersData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setGetAllOrder(ordersData);
             } catch (error) {
                 console.error("Error fetching orders:", error);
-            } finally {
-                setLoading(false);
-            }
+            } 
         };
-        fetchOrders(user?.uid);
-    }, [user?.uid]);
 
-    console.log(getAllOrder)
+        useEffect(() => {
+            fetchOrders();
+          }, []);
+
+    // console.log(getAllOrder)
 
     return (
         <div>
